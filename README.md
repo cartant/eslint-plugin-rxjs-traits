@@ -1,1 +1,1 @@
-# eslint-plugin-rxjs-arity
+# eslint-plugin-rxjs-traits
