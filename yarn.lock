@@ -769,18 +769,6 @@ eslint-module-utils@^2.6.0:
     debug "^2.6.9"
     pkg-dir "^2.0.0"
 
-eslint-plugin-dtslint@^1.1.1:
-  version "1.1.1"
-  resolved "https://registry.yarnpkg.com/eslint-plugin-dtslint/-/eslint-plugin-dtslint-1.1.1.tgz#6d88ab4fddee2f9579ba0c4ab8923d4a6725b76b"
-  integrity sha512-DVN28ia5wlEIzZ5SOCeb+CiTPGavmsgE8urMPcf+DKYaLESDM/fzxEkKRCqgKfh/JChPMsuKOmr/RukAfIk1hw==
-  dependencies:
-    "@phenomnomnominal/tsquery" "^4.1.0"
-    "@typescript-eslint/experimental-utils" "^3.2.0"
-    eslint-etc "^2.0.0"
-    requireindex "~1.2.0"
-    tslib "^2.0.0"
-    tsutils "^3.17.1"
-
 eslint-plugin-import@^2.20.2:
   version "2.22.0"
   resolved "https://registry.yarnpkg.com/eslint-plugin-import/-/eslint-plugin-import-2.22.0.tgz#92f7736fe1fde3e2de77623c838dd992ff5ffb7e"
