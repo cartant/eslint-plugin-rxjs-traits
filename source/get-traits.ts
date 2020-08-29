@@ -31,9 +31,10 @@ export function getTraits(
     const [declaration] = property.getDeclarations() || [];
     if (declaration) {
       const { name } = property;
-      const type = typeChecker.getTypeAtLocation(declaration);
+      const type: ts.Type =
+        (property as any).type || typeChecker.getTypeAtLocation(declaration);
       if (name === "max" || name === "min") {
-        const elements = toElements(property, type, typeChecker);
+        const elements = toElements(type, typeChecker);
         traits[`${name}Length`] = elements ? elements.length : Infinity;
       } else {
         traits[name] = typeChecker.typeToString(type);
@@ -44,15 +45,13 @@ export function getTraits(
 }
 
 function toElements(
-  property: ts.Symbol,
   type: ts.Type,
   typeChecker: ts.TypeChecker
 ): string[] | undefined {
-  const elementsType: ts.Type = (property as any).type || type;
-  let typeArguments: ts.Type[] | undefined = (elementsType as any)
+  let typeArguments: ts.Type[] | undefined = (type as any)
     .resolvedTypeArguments;
   if (typeArguments) {
-    const target = (elementsType as any).target;
+    const target = (type as any).target;
     return target?.hasRestElement
       ? undefined
       : typeArguments.map((typeArgument) =>
