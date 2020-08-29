@@ -12,7 +12,9 @@ type Traits = {
   complete: Boolean;
   error: Boolean;
   max: Elements;
+  maxLength: number;
   min: Elements;
+  minLength: number;
 };
 
 export function getTraits(
@@ -35,7 +37,9 @@ export function getTraits(
       const { name } = property;
       const type = typeChecker.getTypeAtLocation(declaration);
       if (name === "max" || name === "min") {
-        traits[name] = toElements(property, type, typeChecker);
+        const elements = toElements(property, type, typeChecker);
+        traits[name] = elements;
+        traits[`${name}Length`] = elements ? elements.length : Infinity;
       } else {
         traits[name] = typeChecker.typeToString(type);
       }

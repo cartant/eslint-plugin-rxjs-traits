@@ -51,6 +51,8 @@ describe("getTraits", () => {
     expect(traits).to.have.property("async", "true");
     expect(traits).to.have.property("complete", "true");
     expect(traits).to.have.property("error", "false");
+    expect(traits).to.have.property("maxLength", 1);
+    expect(traits).to.have.property("minLength", 0);
     expect(traits.max).to.deep.equal(["number"]);
     expect(traits.min).to.deep.equal([]);
   });
@@ -70,6 +72,8 @@ describe("getTraits", () => {
     expect(traits).to.have.property("async", "false");
     expect(traits).to.have.property("complete", "true");
     expect(traits).to.have.property("error", "false");
+    expect(traits).to.have.property("maxLength", 3);
+    expect(traits).to.have.property("minLength", 0);
     expect(traits.max).to.deep.equal(["number", "number", "number"]);
     expect(traits.min).to.deep.equal([]);
   });
