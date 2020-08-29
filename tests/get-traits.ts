@@ -31,7 +31,31 @@ function compile(code: string, options: ts.CompilerOptions = {}) {
 }
 
 describe("getTraits", () => {
-  it("should return an observable's traits", () => {
+  it("should return a composed observable's traits", () => {
+    const { program, sourceFile } = compile(stripIndent`
+      import { Observable } from "rxjs-traits";
+      let source: Observable<number, {
+        async: true;
+        complete: true;
+        error: false;
+        max: [number];
+        min: [];
+      };
+    `);
+    const [source] = tsquery(sourceFile, `Identifier[name="source"]`) as [
+      ts.Identifier
+    ];
+    expect(source, "no source").to.exist;
+    const traits = getTraits(source, program.getTypeChecker());
+    expect(traits, "no traits").to.exist;
+    expect(traits).to.have.property("async", "true");
+    expect(traits).to.have.property("complete", "true");
+    expect(traits).to.have.property("error", "false");
+    expect(traits.max).to.deep.equal(["number"]);
+    expect(traits.min).to.deep.equal([]);
+  });
+
+  it("should return a composed observable's traits", () => {
     const { program, sourceFile } = compile(stripIndent`
       import { of } from "rxjs-traits";
       import { filter } from "rxjs-traits/operators";
@@ -46,7 +70,7 @@ describe("getTraits", () => {
     expect(traits).to.have.property("async", "false");
     expect(traits).to.have.property("complete", "true");
     expect(traits).to.have.property("error", "false");
-    expect(traits).to.have.property("max", "[number, number, number]");
-    expect(traits).to.have.property("min", "[]");
+    expect(traits.max).to.deep.equal(["number", "number", "number"]);
+    expect(traits.min).to.deep.equal([]);
   });
 });
