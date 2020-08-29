@@ -9,7 +9,7 @@ import { expect } from "chai";
 import { stripIndent } from "common-tags";
 import { Compiler } from "ts-snippet";
 import * as ts from "typescript";
-import { getTraits } from "../source/get-traits";
+import { getObservableTraits, getOperatorTraits } from "../source/traits";
 
 function compile(code: string, options: ts.CompilerOptions = {}) {
   const compiler = new Compiler({
@@ -30,7 +30,7 @@ function compile(code: string, options: ts.CompilerOptions = {}) {
   };
 }
 
-describe("getTraits", () => {
+describe("getObservableTraits", () => {
   it("should return an observable's traits", () => {
     const { program, sourceFile } = compile(stripIndent`
       import { Observable } from "rxjs-traits";
@@ -42,17 +42,19 @@ describe("getTraits", () => {
         min: [];
       };
     `);
-    const [source] = tsquery(sourceFile, `Identifier[name="source"]`) as [
+    const [source] = tsquery(sourceFile, `Identifier[text="source"]`) as [
       ts.Identifier
     ];
     expect(source, "no source").to.exist;
-    const traits = getTraits(source, program.getTypeChecker());
+    const traits = getObservableTraits(source, program.getTypeChecker());
     expect(traits, "no traits").to.exist;
-    expect(traits).to.have.property("async", "true");
-    expect(traits).to.have.property("complete", "true");
-    expect(traits).to.have.property("error", "false");
-    expect(traits).to.have.property("maxLength", 1);
-    expect(traits).to.have.property("minLength", 0);
+    expect(traits).to.deep.equal({
+      async: "true",
+      complete: "true",
+      error: "false",
+      maxLength: 1,
+      minLength: 0,
+    });
   });
 
   it("should return a composed observable's traits", () => {
@@ -61,17 +63,19 @@ describe("getTraits", () => {
       import { filter } from "rxjs-traits/operators";
       const source = of(1, 2, 3).pipe(filter(value => value > 10));
     `);
-    const [source] = tsquery(sourceFile, `Identifier[name="source"]`) as [
+    const [source] = tsquery(sourceFile, `Identifier[text="source"]`) as [
       ts.Identifier
     ];
     expect(source, "no source").to.exist;
-    const traits = getTraits(source, program.getTypeChecker());
+    const traits = getObservableTraits(source, program.getTypeChecker());
     expect(traits, "no traits").to.exist;
-    expect(traits).to.have.property("async", "false");
-    expect(traits).to.have.property("complete", "true");
-    expect(traits).to.have.property("error", "false");
-    expect(traits).to.have.property("maxLength", 3);
-    expect(traits).to.have.property("minLength", 0);
+    expect(traits).to.deep.equal({
+      async: "false",
+      complete: "true",
+      error: "false",
+      maxLength: 3,
+      minLength: 0,
+    });
   });
 
   it("should return an observable's traits with rest elements", () => {
@@ -85,17 +89,19 @@ describe("getTraits", () => {
         min: [];
       };
     `);
-    const [source] = tsquery(sourceFile, `Identifier[name="source"]`) as [
+    const [source] = tsquery(sourceFile, `Identifier[text="source"]`) as [
       ts.Identifier
     ];
     expect(source, "no source").to.exist;
-    const traits = getTraits(source, program.getTypeChecker());
+    const traits = getObservableTraits(source, program.getTypeChecker());
     expect(traits, "no traits").to.exist;
-    expect(traits).to.have.property("async", "true");
-    expect(traits).to.have.property("complete", "true");
-    expect(traits).to.have.property("error", "false");
-    expect(traits).to.have.property("maxLength", Infinity);
-    expect(traits).to.have.property("minLength", 0);
+    expect(traits).to.deep.equal({
+      async: "true",
+      complete: "true",
+      error: "false",
+      maxLength: Infinity,
+      minLength: 0,
+    });
   });
 
   it("should return a composed observable's traits with rest elements", () => {
@@ -104,16 +110,51 @@ describe("getTraits", () => {
       import { startWith } from "rxjs-traits/operators";
       const source = interval(1e3).pipe(startWith("beginning"));
     `);
-    const [source] = tsquery(sourceFile, `Identifier[name="source"]`) as [
+    const [source] = tsquery(sourceFile, `Identifier[text="source"]`) as [
       ts.Identifier
     ];
     expect(source, "no source").to.exist;
-    const traits = getTraits(source, program.getTypeChecker());
+    const traits = getObservableTraits(source, program.getTypeChecker());
     expect(traits, "no traits").to.exist;
-    expect(traits).to.have.property("async", "true");
-    expect(traits).to.have.property("complete", "false");
-    expect(traits).to.have.property("error", "false");
-    expect(traits).to.have.property("maxLength", Infinity);
-    expect(traits).to.have.property("minLength", Infinity);
+    expect(traits).to.deep.equal({
+      async: "true",
+      complete: "false",
+      error: "false",
+      maxLength: Infinity,
+      minLength: Infinity,
+    });
+  });
+});
+
+describe("getOperatorTraits", () => {
+  it("should return an operator's traits", () => {
+    const { program, sourceFile } = compile(stripIndent`
+      import { of } from "rxjs-traits";
+      import { filter } from "rxjs-traits/operators";
+      const source = of(1, 2, 3).pipe(filter(value => value > 10));
+    `);
+    const [operator] = tsquery(
+      sourceFile,
+      `CallExpression[expression.text="filter"]`
+    ) as [ts.CallExpression];
+    expect(operator, "no operator").to.exist;
+    const result = getOperatorTraits(operator, program.getTypeChecker());
+    expect(result, "no result").to.exist;
+    expect(result).to.deep.equal({
+      in: {
+        async: "false",
+        complete: "true",
+        error: "false",
+        maxLength: 3,
+        minLength: 3,
+      },
+      out: {
+        async: "false",
+        complete: "true",
+        error: "false",
+        maxLength: 3,
+        minLength: 0,
+      },
+    });
   });
 });

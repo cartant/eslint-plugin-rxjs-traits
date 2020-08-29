@@ -14,19 +14,41 @@ type Traits = {
   minLength: number;
 };
 
-export function getTraits(
+export function getObservableTraits(
   node: ts.Identifier,
   typeChecker: ts.TypeChecker
 ): Traits | undefined {
-  const nodeType = typeChecker.getTypeAtLocation(node);
-  const nodeTypeArguments =
-    nodeType.aliasTypeArguments || (nodeType as any).typeArguments;
-  const nodeTraits = nodeTypeArguments?.[1];
-  if (!nodeTraits) {
+  const type = typeChecker.getTypeAtLocation(node);
+  return getTypeTraits(type, typeChecker);
+}
+
+export function getOperatorTraits(
+  callExpression: ts.CallExpression,
+  typeChecker: ts.TypeChecker
+): { in: Traits; out: Traits } {
+  const signature = typeChecker.getResolvedSignature(callExpression);
+  const returnType = typeChecker.getReturnTypeOfSignature(signature);
+  if (returnType.aliasTypeArguments?.length !== 2) {
+    return { in: undefined, out: undefined };
+  }
+  const result = {
+    in: getTypeTraits(returnType.aliasTypeArguments[0], typeChecker),
+    out: getTypeTraits(returnType.aliasTypeArguments[1], typeChecker),
+  };
+  return result;
+}
+
+function getTypeTraits(
+  type: ts.Type,
+  typeChecker: ts.TypeChecker
+): Traits | undefined {
+  const typeArguments = type.aliasTypeArguments || (type as any).typeArguments;
+  const traitsType = typeArguments?.[1];
+  if (!traitsType) {
     return undefined;
   }
   const traits: Record<string, unknown> = {};
-  const properties = typeChecker.getPropertiesOfType(nodeTraits);
+  const properties = typeChecker.getPropertiesOfType(traitsType);
   for (const property of properties) {
     const [declaration] = property.getDeclarations() || [];
     if (declaration) {
