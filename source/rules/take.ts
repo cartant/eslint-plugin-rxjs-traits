@@ -4,6 +4,7 @@
  */
 
 import { TSESTree as es } from "@typescript-eslint/experimental-utils";
+import { getTraits } from "../get-traits";
 import { ruleCreator } from "../utils";
 
 const rule = ruleCreator({

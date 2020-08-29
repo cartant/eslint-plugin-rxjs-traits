@@ -5,11 +5,11 @@
 
 import * as ts from "typescript";
 
-type Boolean = "true" | "false" | "boolean";
+type Trait = "true" | "false" | "boolean";
 type Traits = {
-  async: Boolean;
-  complete: Boolean;
-  error: Boolean;
+  async: Trait;
+  complete: Trait;
+  error: Trait;
   maxLength: number;
   minLength: number;
 };
