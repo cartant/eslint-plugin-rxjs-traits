@@ -31,7 +31,7 @@ function compile(code: string, options: ts.CompilerOptions = {}) {
 }
 
 describe("getTraits", () => {
-  it("should return a composed observable's traits", () => {
+  it("should return an observable's traits", () => {
     const { program, sourceFile } = compile(stripIndent`
       import { Observable } from "rxjs-traits";
       let source: Observable<number, {
@@ -53,8 +53,6 @@ describe("getTraits", () => {
     expect(traits).to.have.property("error", "false");
     expect(traits).to.have.property("maxLength", 1);
     expect(traits).to.have.property("minLength", 0);
-    expect(traits.max).to.deep.equal(["number"]);
-    expect(traits.min).to.deep.equal([]);
   });
 
   it("should return a composed observable's traits", () => {
@@ -74,7 +72,48 @@ describe("getTraits", () => {
     expect(traits).to.have.property("error", "false");
     expect(traits).to.have.property("maxLength", 3);
     expect(traits).to.have.property("minLength", 0);
-    expect(traits.max).to.deep.equal(["number", "number", "number"]);
-    expect(traits.min).to.deep.equal([]);
+  });
+
+  it("should return an observable's traits with rest elements", () => {
+    const { program, sourceFile } = compile(stripIndent`
+      import { Observable } from "rxjs-traits";
+      let source: Observable<number, {
+        async: true;
+        complete: true;
+        error: false;
+        max: [string, ...number[]];
+        min: [];
+      };
+    `);
+    const [source] = tsquery(sourceFile, `Identifier[name="source"]`) as [
+      ts.Identifier
+    ];
+    expect(source, "no source").to.exist;
+    const traits = getTraits(source, program.getTypeChecker());
+    expect(traits, "no traits").to.exist;
+    expect(traits).to.have.property("async", "true");
+    expect(traits).to.have.property("complete", "true");
+    expect(traits).to.have.property("error", "false");
+    expect(traits).to.have.property("maxLength", Infinity);
+    expect(traits).to.have.property("minLength", 0);
+  });
+
+  it("should return a composed observable's traits with rest elements", () => {
+    const { program, sourceFile } = compile(stripIndent`
+      import { interval } from "rxjs-traits";
+      import { startWith } from "rxjs-traits/operators";
+      const source = interval(1e3).pipe(startWith("beginning"));
+    `);
+    const [source] = tsquery(sourceFile, `Identifier[name="source"]`) as [
+      ts.Identifier
+    ];
+    expect(source, "no source").to.exist;
+    const traits = getTraits(source, program.getTypeChecker());
+    expect(traits, "no traits").to.exist;
+    expect(traits).to.have.property("async", "true");
+    expect(traits).to.have.property("complete", "false");
+    expect(traits).to.have.property("error", "false");
+    expect(traits).to.have.property("maxLength", Infinity);
+    expect(traits).to.have.property("minLength", Infinity);
   });
 });

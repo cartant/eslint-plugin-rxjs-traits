@@ -6,14 +6,11 @@
 import * as ts from "typescript";
 
 type Boolean = "true" | "false" | "boolean";
-type Elements = string[] | undefined;
 type Traits = {
   async: Boolean;
   complete: Boolean;
   error: Boolean;
-  max: Elements;
   maxLength: number;
-  min: Elements;
   minLength: number;
 };
 
@@ -31,14 +28,12 @@ export function getTraits(
   const traits: Record<string, unknown> = {};
   const properties = typeChecker.getPropertiesOfType(nodeTraits);
   for (const property of properties) {
-    const { name } = property;
     const [declaration] = property.getDeclarations() || [];
     if (declaration) {
       const { name } = property;
       const type = typeChecker.getTypeAtLocation(declaration);
       if (name === "max" || name === "min") {
         const elements = toElements(property, type, typeChecker);
-        traits[name] = elements;
         traits[`${name}Length`] = elements ? elements.length : Infinity;
       } else {
         traits[name] = typeChecker.typeToString(type);
@@ -52,14 +47,17 @@ function toElements(
   property: ts.Symbol,
   type: ts.Type,
   typeChecker: ts.TypeChecker
-): Elements {
-  const typeArguments: ts.Type[] | undefined =
-    (type as any)?.resolvedTypeArguments ||
-    (property as any)?.type?.resolvedTypeArguments;
+): string[] | undefined {
+  const elementsType: ts.Type = (property as any).type || type;
+  let typeArguments: ts.Type[] | undefined = (elementsType as any)
+    .resolvedTypeArguments;
   if (typeArguments) {
-    return typeArguments.map((typeArgument) =>
-      typeChecker.typeToString(typeArgument)
-    );
+    const target = (elementsType as any).target;
+    return target?.hasRestElement
+      ? undefined
+      : typeArguments.map((typeArgument) =>
+          typeChecker.typeToString(typeArgument)
+        );
   }
   const text = typeChecker.typeToString(type);
   if (text === "[]") {
