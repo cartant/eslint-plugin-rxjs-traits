@@ -1390,9 +1390,9 @@ lint-staged@^10.1.1:
     stringify-object "^3.3.0"
 
 listr2@^2.6.0:
-  version "2.6.1"
-  resolved "https://registry.yarnpkg.com/listr2/-/listr2-2.6.1.tgz#fbbabd8eea723924df7530042c1990b346e81706"
-  integrity sha512-1aPX9GkS+W0aHfPUDedJqeqj0DOe1605NaNoqdwEYw/UF2UbZgCIIMpXXZALeG/8xzwMBztguzQEubU5Xw1Qbw==
+  version "2.6.2"
+  resolved "https://registry.yarnpkg.com/listr2/-/listr2-2.6.2.tgz#4912eb01e1e2dd72ec37f3895a56bf2622d6f36a"
+  integrity sha512-6x6pKEMs8DSIpA/tixiYY2m/GcbgMplMVmhQAaLFxEtNSKLeWTGjtmU57xvv6QCm2XcqzyNXL/cTSVf4IChCRA==
   dependencies:
     chalk "^4.1.0"
     cli-truncate "^2.1.0"
@@ -1945,9 +1945,9 @@ rxjs-report-usage@~1.0.4:
     prompts "~2.3.2"
 
 rxjs-traits@^0.0.1-beta.0:
-  version "0.0.1-beta.3"
-  resolved "https://registry.yarnpkg.com/rxjs-traits/-/rxjs-traits-0.0.1-beta.3.tgz#01daedbaf953c2bf9256ad2e5e17d0d7d2a8cdc7"
-  integrity sha512-aB/gaS+92l2y3ktwyXn07xW4Ipi/GFaMspdHcobq6z3NikKDIapRQf02ReRon3OXg+FaqFvBn91uvBPK14pIMA==
+  version "0.0.1-beta.4"
+  resolved "https://registry.yarnpkg.com/rxjs-traits/-/rxjs-traits-0.0.1-beta.4.tgz#5819fb79bab605d487d7fe610221115050888ce6"
+  integrity sha512-GI/H/o5m6zElz5uzXeKvibMZZRIvb2bqMpHn1mrfvPQLeaIRb/p4Xz9yDvvbCBBOztB5aD1RKJXCS7PuMjKXzA==
   dependencies:
     rxjs-report-usage "~1.0.4"
 
