@@ -19,6 +19,7 @@ const rule = ruleCreator({
     },
     fixable: undefined,
     messages: {
+      // TODO: make 'will' replaceable with 'might' once options are implemented
       complete: "The observable will not complete.",
       length: "Fewer elements than specified will be taken.",
     },
