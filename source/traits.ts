@@ -15,7 +15,7 @@ export type Traits = {
 };
 
 export function getObservableTraits(
-  node: ts.Identifier,
+  node: ts.Node,
   typeChecker: ts.TypeChecker
 ): Traits | undefined {
   const type = typeChecker.getTypeAtLocation(node);
