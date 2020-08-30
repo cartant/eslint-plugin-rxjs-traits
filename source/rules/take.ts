@@ -57,7 +57,7 @@ const rule = ruleCreator({
       );
       const text = typeChecker.typeToString(type);
       const count = parseInt(text, 10);
-      return Number.isNaN(count) ? Infinity : count;
+      return Number.isNaN(count) ? 0 : count;
     }
 
     return {

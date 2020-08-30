@@ -17,6 +17,14 @@ ruleTester({ types: true }).run("take", rule, {
         const result = of(1, 2, 3).pipe(take(1));
       `,
     },
+    {
+      code: stripIndent`
+        import { of } from "rxjs-traits";
+        import { take } from "rxjs-traits/operators";
+        const count: number = 1;
+        const result = of(1, 2, 3).pipe(take(count));
+      `,
+    },
   ],
   invalid: [
     fromFixture(stripIndent`
