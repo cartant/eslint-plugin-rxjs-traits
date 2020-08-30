@@ -9,6 +9,28 @@ import rule = require("../../source/rules/take");
 import { ruleTester } from "../utils";
 
 ruleTester({ types: true }).run("take", rule, {
-  valid: [],
-  invalid: [],
+  valid: [
+    {
+      code: stripIndent`
+        import { of } from "rxjs-traits";
+        import { take } from "rxjs-traits/operators";
+        const result = of(1, 2, 3).pipe(take(1));
+      `,
+    },
+  ],
+  invalid: [
+    fromFixture(stripIndent`
+      import { of } from "rxjs-traits";
+      import { take } from "rxjs-traits/operators";
+      const result = of(1).pipe(take(2));
+                                ~~~~ [length]
+    `),
+    fromFixture(stripIndent`
+      import { NEVER } from "rxjs-traits";
+      import { take } from "rxjs-traits/operators";
+      const result = NEVER.pipe(take(1));
+                                ~~~~ [complete]
+                                ~~~~ [length]
+    `),
+  ],
 });

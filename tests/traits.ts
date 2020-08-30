@@ -141,14 +141,14 @@ describe("getOperatorTraits", () => {
     const result = getOperatorTraits(operator, program.getTypeChecker());
     expect(result, "no result").to.exist;
     expect(result).to.deep.equal({
-      in: {
+      input: {
         async: "false",
         complete: "true",
         error: "false",
         maxLength: 3,
         minLength: 3,
       },
-      out: {
+      output: {
         async: "false",
         complete: "true",
         error: "false",

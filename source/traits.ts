@@ -5,8 +5,8 @@
 
 import * as ts from "typescript";
 
-type Trait = "true" | "false" | "boolean";
-type Traits = {
+export type Trait = "true" | "false" | "boolean";
+export type Traits = {
   async: Trait;
   complete: Trait;
   error: Trait;
@@ -25,15 +25,15 @@ export function getObservableTraits(
 export function getOperatorTraits(
   callExpression: ts.CallExpression,
   typeChecker: ts.TypeChecker
-): { in: Traits; out: Traits } {
+): { input: Traits; output: Traits } {
   const signature = typeChecker.getResolvedSignature(callExpression);
   const returnType = typeChecker.getReturnTypeOfSignature(signature);
   if (returnType.aliasTypeArguments?.length !== 2) {
-    return { in: undefined, out: undefined };
+    return { input: undefined, output: undefined };
   }
   const result = {
-    in: getTypeTraits(returnType.aliasTypeArguments[0], typeChecker),
-    out: getTypeTraits(returnType.aliasTypeArguments[1], typeChecker),
+    input: getTypeTraits(returnType.aliasTypeArguments[0], typeChecker),
+    output: getTypeTraits(returnType.aliasTypeArguments[1], typeChecker),
   };
   return result;
 }

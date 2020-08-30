@@ -4,6 +4,9 @@
  */
 
 import { TSESTree as es } from "@typescript-eslint/experimental-utils";
+import { getParserServices } from "eslint-etc";
+import { takeable } from "../takeable";
+import { getOperatorTraits, Traits } from "../traits";
 import { ruleCreator } from "../utils";
 
 const rule = ruleCreator({
@@ -16,14 +19,63 @@ const rule = ruleCreator({
     },
     fixable: undefined,
     messages: {
-      tk: "TK",
+      complete: "The observable will not complete.",
+      length: "Fewer elements than specified will be taken.",
     },
     schema: [],
     type: "problem",
   },
   name: "take",
   create: (context) => {
-    return {};
+    const { esTreeNodeToTSNodeMap, program } = getParserServices(context);
+    const typeChecker = program.getTypeChecker();
+
+    function checkComplete(output: Traits, callee: es.Node) {
+      const failure = "false"; // TODO: options
+      if (output.complete === failure) {
+        context.report({
+          messageId: "complete",
+          node: callee,
+        });
+      }
+    }
+
+    function checkLength(input: Traits, arg: es.Node, callee: es.Node) {
+      const failure = "false"; // TODO: options
+      if (takeable(input, toCount(arg)) === failure) {
+        context.report({
+          messageId: "length",
+          node: callee,
+        });
+      }
+    }
+
+    function toCount(arg: es.Node): number {
+      const type = typeChecker.getTypeAtLocation(
+        esTreeNodeToTSNodeMap.get(arg)
+      );
+      const text = typeChecker.typeToString(type);
+      const count = parseInt(text, 10);
+      return Number.isNaN(count) ? Infinity : count;
+    }
+
+    return {
+      "CallExpression[callee.name='take']": (
+        callExpression: es.CallExpression
+      ) => {
+        const { input, output } = getOperatorTraits(
+          esTreeNodeToTSNodeMap.get(callExpression),
+          typeChecker
+        );
+        if (!input || !output) {
+          return;
+        }
+        const { callee } = callExpression;
+        const [arg] = callExpression.arguments;
+        checkComplete(output, callee);
+        checkLength(input, arg, callee);
+      },
+    };
   },
 });
 
