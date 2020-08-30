@@ -19,7 +19,9 @@ const rule = ruleCreator({
     },
     fixable: undefined,
     messages: {
-      // TODO: make 'will' replaceable with 'might' once options are implemented
+      // TODO: Make 'will' replaceable with 'might' once options are
+      // implemented. Use 'sure' and 'unsure' in the configuration to control
+      // whether or not certainty is required before reporting failures.
       complete: "The observable will not complete.",
       length: "Fewer elements than specified will be taken.",
     },
