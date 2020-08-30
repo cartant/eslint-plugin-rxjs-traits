@@ -1,5 +1,6 @@
-yarn-error.log
+/.vscode
 /build
 /dist
 /node_modules
 /temp
+yarn-error.log
