@@ -1,6 +1,6 @@
 # eslint-plugin-rxjs-traits
 
-This repo contains the rules that accompany the [`rxjs-traits`](https://github.com/cartant/rxjs-traits) proof-of-concept that [Moshe Kolodny](https://github.com/kolodny) and I have developed - and about which we spoke at RxJS Live London 2020.
+This repo contains the rules that accompany the [`rxjs-traits`](https://github.com/cartant/rxjs-traits) proof-of-concept that [Moshe Kolodny](https://github.com/kolodny) and I have developed - and about which we spoke at RxJS Live London 2020 ([slides](https://2020-09-18-rxjs-traits.vercel.app/)).
 
 When installing the rules, the ESLint TypeScript parser will need to be installed, too:
 
