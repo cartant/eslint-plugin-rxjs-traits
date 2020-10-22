@@ -34,6 +34,9 @@
     "ts-snippet": "^4.3.0",
     "typescript": "~4.0.2"
   },
+  "engines": {
+    "node": ">=12.0.0"
+  },
   "homepage": "https://github.com/cartant/eslint-plugin-rxjs-traits",
   "husky": {
     "hooks": {
