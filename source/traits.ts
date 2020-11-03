@@ -50,17 +50,16 @@ function getTypeTraits(
   const traits: Record<string, unknown> = {};
   const properties = typeChecker.getPropertiesOfType(traitsType);
   for (const property of properties) {
-    const [declaration] = property.getDeclarations() || [];
-    if (declaration) {
-      const { name } = property;
-      const type: ts.Type =
-        (property as any).type || typeChecker.getTypeAtLocation(declaration);
-      if (name === "max" || name === "min") {
-        const elements = toElements(type, typeChecker);
-        traits[`${name}Length`] = elements ? elements.length : Infinity;
-      } else {
-        traits[name] = typeChecker.typeToString(type);
-      }
+    const type = typeChecker.getTypeOfSymbolAtLocation(
+      property,
+      property.valueDeclaration
+    );
+    const { name } = property;
+    if (name === "max" || name === "min") {
+      const elements = toElements(type, typeChecker);
+      traits[`${name}Length`] = elements ? elements.length : Infinity;
+    } else {
+      traits[name] = typeChecker.typeToString(type);
     }
   }
   return traits as Traits;
