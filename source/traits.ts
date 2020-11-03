@@ -31,19 +31,21 @@ export function getOperatorTraits(
   if (returnType.aliasTypeArguments?.length !== 2) {
     return { input: undefined, output: undefined };
   }
-  const result = {
+  return {
     input: getTypeTraits(returnType.aliasTypeArguments[0], typeChecker),
     output: getTypeTraits(returnType.aliasTypeArguments[1], typeChecker),
   };
-  return result;
 }
 
 function getTypeTraits(
   type: ts.Type,
   typeChecker: ts.TypeChecker
 ): Traits | undefined {
-  const typeArguments = type.aliasTypeArguments || (type as any).typeArguments;
-  const traitsType = typeArguments?.[1];
+  if (!isTypeReference(type)) {
+    return undefined;
+  }
+  const typeArguments = typeChecker.getTypeArguments(type);
+  const traitsType = typeArguments[1];
   if (!traitsType) {
     return undefined;
   }
@@ -63,6 +65,10 @@ function getTypeTraits(
     }
   }
   return traits as Traits;
+}
+
+function isTypeReference(type: ts.Type): type is ts.TypeReference {
+  return Boolean((type as any).target);
 }
 
 function toElements(
