@@ -37,6 +37,10 @@
   "engines": {
     "node": ">=12.0.0"
   },
+  "files": [
+    "dist",
+    "docs"
+  ],
   "homepage": "https://github.com/cartant/eslint-plugin-rxjs-traits",
   "husky": {
     "hooks": {
