@@ -25,8 +25,11 @@ export function getObservableTraits(
 export function getOperatorTraits(
   callExpression: ts.CallExpression,
   typeChecker: ts.TypeChecker
-): { input: Traits; output: Traits } {
+): { input?: Traits; output?: Traits } {
   const signature = typeChecker.getResolvedSignature(callExpression);
+  if (!signature) {
+    return { input: undefined, output: undefined };
+  }
   const returnType = typeChecker.getReturnTypeOfSignature(signature);
   if (returnType.aliasTypeArguments?.length !== 2) {
     return { input: undefined, output: undefined };
